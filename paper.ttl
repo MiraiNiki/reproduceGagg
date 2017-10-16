@@ -1,0 +1,41 @@
+@base <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix author: <http://mirainiki/author/> .
+@prefix paper: <http://mirainiki/paper/> .
+@prefix ref: <http://mirainiki/ref/> .
+
+<#a1>
+    author:position <#student> ;
+    author:member <#org1> .
+
+<#a2>
+    author:position <#senior> ;
+    author:member <#org1> .
+
+<#a3>
+    author:position <#student> ;
+    author:member <#org2> .
+
+<#p1>
+    paper:creator <#a1> ;
+    paper:creator <#a2> ;
+    paper:partOf <#eswc2013> .
+
+<#p2>
+    paper:creator <#a2> ;
+    paper:creator <#a3> ;
+    paper:references <#refs-p2> ;
+    paper:partOf <#eswc2014> .
+
+<#p3>
+    paper:creator <#a3> ;
+    paper:references <#refs-p3> ;
+    paper:partOf <#eswc2014> .
+
+<#refs-p2>
+    ref:ref <#p1> .
+
+<#refs-p3>
+    ref:ref <#p1> ;
+    ref:ref <#p2> .
