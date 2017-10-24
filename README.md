@@ -1,4 +1,4 @@
-# reproduceGagg
+reproduceGagg
 ----
 
 You can get a grouped graph of example in the paper "Gagg: A Graph Aggregation Operator".
