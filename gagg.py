@@ -12,7 +12,7 @@ query = ("PREFIX : <http://example.org/#> \n"
 		+ " ?paper2 paper:creator ?author2 .\n"
 		+ " ?paper1 paper:references ?refs .\n"
 		+ " ?refs ref:ref ?paper2 .\n"
-		#demensions_x
+		#dimensions_x
 		+ " ?author1 author:member ?member1 ;\n"
 		+ "  author:position ?position1 .\n"
 		#dimensions_y
@@ -24,13 +24,14 @@ query = ("PREFIX : <http://example.org/#> \n"
 		+ " ?paper2 paper:creator ?author2 .\n"
 		+ "}")
 
-node1 = []
-node2 = []
+dimension1 = []
+dimension2 = []
 edge = []
-#measure is hash structure
 measure1 = []
 measure2 = []
 measureEdge = []
+node = []
+measure = []
 
 #request response to fuseki server
 #input: url, query
@@ -45,25 +46,32 @@ def getResultArray(response):
 	for data in responseSparqlArray:
 		#dimension
 		d1 = {"m": data["member1"]['value'], "p": data["position1"]['value']}
-		if d1 not in node1:
-			node1.append(d1)
+		if d1 not in dimension1:
+			dimension1.append(d1)
+			if d1 not in node:
+				node.append(d1)
 		d2 = {"m": data["member2"]['value'], "p": data["position2"]['value']}
-		if d2 not in node2:
-			node2.append(d2)		
+		if d2 not in dimension2:
+			dimension2.append(d2)
+			if d2 not in node:
+				node.append(d2)		
 		#relation
-		rel = {"from": data["author1"]['value'], "to": data["author2"]['value']}
+		rel = {"from": node.index(d1), "to": node.index(d2)}
 		if rel not in edge:
 			edge.append(rel)
 		#measure
-		m1 = {"index":node1.index(d1), "m":data['paper1']['value']}
+		m1 = {"index":node.index(d1), "m":data['paper1']['value']}
 		if m1 not in measure1:
 			measure1.append(m1)
-		m2 = {"index":node2.index(d2), "m":data['paper2']['value']}
+			if m1 not in measure:
+				measure.append(m1)
+		m2 = {"index":node.index(d2), "m":data['paper2']['value']}
 		if m2 not in measure2:
 			measure2.append(m2)
+			if m2 not in measure:
+				measure.append(m2)
 		mrel = {"index":edge.index(rel), "o":data['paper1']['value']}
-		if mrel not in edge:
-			measureEdge.append(mrel)
+		measureEdge.append(mrel)
 
 def printResult(dicList):
 	for dic in dicList:
@@ -71,23 +79,34 @@ def printResult(dicList):
 			print(k, v, end=" , ")
 		print()
 
+def testGroupedGraph():
+	print("node :")
+	node.sort(key=lambda x:x['m'])
+	printResult(node)
+	print("measure :")
+	measure.sort(key=lambda x:x['index'])
+	printResult(measure)
+	edge.sort(key=lambda x:x['from'])
+	print("edge :")
+	printResult(edge)
+	measureEdge.sort(key=lambda x:x['index'])
+	print("measureEdge :")
+	printResult(measureEdge)
+	#print("----------------------------------------------------------------------------")
+	#print("dimension1 :")
+	#printResult(dimension1)
+	#print("dimension2 :")
+	#printResult(dimension2)
+	#print("measure1 :")
+	#printResult(measure1)
+	#print("measure2 :")
+	#printResult(measure2)
+
 #use your endpoint at local
 url = 'http://localhost:3030/paper_gagg/query'
 #get together ??
 response = requestResponseToFusekiServer(url, query)
 if response['results'] != []:
 	getResultArray(response)
-	print("node1 :")
-	printResult(node1)
-	print("node2 :")
-	printResult(node2)
-	print("edge :")
-	printResult(edge)
-	print("measure1 :")
-	printResult(measure1)
-	print("measure2 :")
-	printResult(measure2)
-	print("measureEdge :")
-	printResult(measureEdge)
-
+	testGroupedGraph()
 
