@@ -55,9 +55,15 @@ def getResultArray(response):
 		if rel not in edge:
 			edge.append(rel)
 		#measure
-		measure1.append({"index":node1.index(d1), "m":data['paper1']['value']})
-		measure2.append({"index":node2.index(d2), "n":data['paper2']['value']})
-		measureEdge.append({"index":edge.index(rel), "o":data['paper1']['value']})
+		m1 = {"index":node1.index(d1), "m":data['paper1']['value']}
+		if m1 not in measure1:
+			measure1.append(m1)
+		m2 = {"index":node2.index(d2), "m":data['paper2']['value']}
+		if m2 not in measure2:
+			measure2.append(m2)
+		mrel = {"index":edge.index(rel), "o":data['paper1']['value']}
+		if mrel not in edge:
+			measureEdge.append(mrel)
 
 def printResult(dicList):
 	for dic in dicList:
